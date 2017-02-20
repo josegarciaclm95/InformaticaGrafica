@@ -1,0 +1,10 @@
+﻿helloworld.obj : error LNK2019: símbolo externo glutInit sin resolver al que se hace referencia en la función main
+helloworld.obj : error LNK2019: símbolo externo glutInitDisplayMode sin resolver al que se hace referencia en la función main
+helloworld.obj : error LNK2019: símbolo externo glutInitWindowSize sin resolver al que se hace referencia en la función main
+helloworld.obj : error LNK2019: símbolo externo glutMainLoop sin resolver al que se hace referencia en la función main
+helloworld.obj : error LNK2019: símbolo externo glutCreateWindow sin resolver al que se hace referencia en la función main
+helloworld.obj : error LNK2019: símbolo externo glutPostRedisplay sin resolver al que se hace referencia en la función "void __cdecl motion(int,int)" (?motion@@YAXHH@Z)
+helloworld.obj : error LNK2019: símbolo externo glutSwapBuffers sin resolver al que se hace referencia en la función "void __cdecl redraw(void)" (?redraw@@YAXXZ)
+helloworld.obj : error LNK2019: símbolo externo glutBitmapCharacter sin resolver al que se hace referencia en la función "void __cdecl output(float,float,char *)" (?output@@YAXMMPEAD@Z)
+glut32.lib : warning LNK4272: el tipo de máquina de biblioteca 'X86' está en conflicto con el tipo de máquina de destino 'x64'
+C:\Users\garci\Google Drive\4º año\2º Cuatrimestre\Informática Gráfica\Sesion 10-02\helloworld\x64\Debug\helloworld.exe : fatal error LNK1120: 8 externos sin resolver
