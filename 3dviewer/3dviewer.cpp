@@ -107,7 +107,8 @@ void windowSelect(int value);
 void trimonSelect(int value);
 void popupmenu(int value);
 
-
+//Fill the functions when there's a "to do"
+//Optional work. For the excellent. Load a .tri file, load in the project and compile with openGL 
 //*******************************************************************
 
 void
@@ -163,7 +164,21 @@ initCube(void)
 	{
 		0, 1, 2,  // Bottom
 		2, 3, 0,
-		/* ... To do ... */
+
+		0, 3, 4,  // Right
+		0, 7, 4,
+
+		3, 4, 5,  // Back
+		2, 3, 5,
+
+		1, 6, 5,  // Left
+		1, 2, 5,
+		
+		1, 6, 7,  // Front
+		1, 7, 0,
+
+		5, 6, 7,  // Top
+		7, 5, 4,
 	};
 
 	// The indices are stored in an element-array buffer (EBO) 
