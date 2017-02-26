@@ -18,9 +18,9 @@
 #include <iostream> 
 #include <stdio.h>
 #include <stdlib.h>
-
 /* Microsoft Visual C++ */
 #include <windows.h>
+using namespace std;
 
 /* OpenGL */
 #include "GL/glew.h"  /* OpenGL Extension Wrangler*/
@@ -28,7 +28,6 @@
 
 /* Zalman Trimon 3D display */
 #include "trimon.h"
-
 
 /*******************/
 /* Data structures */
@@ -56,7 +55,8 @@ int lastX = 0, lastY = 0;
 bool isLeftButtonPressed = false;
 
 /* Model menu options */
-enum whichModel_type { PYRAMID, CUBE, OCTAHEDRON, TEAPOT } 
+enum whichModel_type { PYRAMID, CUBE, OCTAHEDRON, TEAPOT, ICOSAHEDRON, TORUS
+}
   whichModel; 
 
 /* Array of characters */
@@ -69,7 +69,7 @@ GLuint pyramid_vao, pyramid_vbo;
 GLuint cube_vao, cube_vbo, cube_ebo;
 
 /* Octahedron vertex-array and buffer objects */
-/* ... To do ... */
+GLuint octo_vao, octo_vbo, octo_ebo;
 
 /* Macro used in glVertexAttribPointer() calls, from the red book */
 #define BUFFER_OFFSET(bytes) ((GLubyte *) NULL + (bytes))
@@ -117,13 +117,24 @@ initPyramid(void)
 	// A square pyramid, statically allocated
 	static const GLfloat pyramid_positions[] =
 	{
-		 0.5f, 0.0f,  0.5f,	 // Bottom (2 triangles)
-		-0.5f, 0.0f,  0.5f,
-		-0.5f, 0.0f, -0.5f,
-		-0.5f, 0.0f, -0.5f,
-		 0.5f, 0.0f, -0.5f,
-		 0.5f, 0.0f,  0.5f,
-		 /* ... To do ... */
+		 0.5f, 0.0f,  0.5f, //0	 // Bottom (2 triangles)
+		-0.5f, 0.0f,  0.5f, //1
+		-0.5f, 0.0f, -0.5f, //2
+		-0.5f, 0.0f, -0.5f, //2
+		 0.5f, 0.0f, -0.5f, //3
+		 0.5f, 0.0f,  0.5f, //0
+		 0.5f, 0.0f,  0.5f,	//0 // Front face (1 triangle)
+		-0.5f, 0.0f,  0.5f, //1
+		 0.0f, 0.75f,  0.0f, //4 
+		 0.5f, 0.0f,  0.5f,	//0 // Right face (1 triangle)
+		 0.5f, 0.0f, -0.5f, //3	
+		 0.0f, 0.75f,  0.0f, //4  
+		-0.5f, 0.0f,  0.5f, //1 // Left face (1 triangle)
+		-0.5f, 0.0f, -0.5f, //2
+		 0.0f, 0.75f,  0.0f, //4 
+		-0.5f, 0.0f, -0.5f, //2 // Back face (1 triangle)
+		 0.5f, 0.0f, -0.5f, //3	
+		 0.0f, 0.75f,  0.0f //4 
 	};
 	
 	// Set up the vertex-array object (VAO)
@@ -134,7 +145,7 @@ initPyramid(void)
 	glGenBuffers(1, &pyramid_vbo);  // Reserve a name for the buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, pyramid_vbo);  // Bind it to the GL_ARRAY_BUFFER target
 	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramid_positions), pyramid_positions, GL_STATIC_DRAW);
-		// Allocate space for it (sizeof(positions)) and copy data
+	// Allocate space for it (sizeof(positions)) and copy data
 
 	// Connect data to vertex shader, the entrance to OpenGL pipeline
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -185,7 +196,7 @@ initCube(void)
 	glGenBuffers(1, &cube_ebo);  // Reserve a name for the buffer object
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_ebo);  // Bind it to the GL_ELEMENT_ARRAY_BUFFER target
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
-		// Allocate space for it (sizeof(positions)) and copy data
+	// Allocate space for it (sizeof(positions)) and copy data
 
 	// Set up the vertex-array object (VAO)
 	glGenVertexArrays(1, &cube_vao);  // Reserve a name for the object
@@ -195,7 +206,7 @@ initCube(void)
 	glGenBuffers(1, &cube_vbo);  // Reserve a name for the buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);  // Bind it to the GL_ARRAY_BUFFER target
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_positions), cube_positions, GL_STATIC_DRAW);
-		// Allocate space for it (sizeof(positions)) and copy data
+	// Allocate space for it (sizeof(positions)) and copy data
 
 	// Connect data to vertex shader, the entrance to OpenGL pipeline
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -207,7 +218,49 @@ initCube(void)
 void
 initOctahedron(void)
 {
-	/* ... To do ... */
+	// An indexed cube, statically allocated
+	static const GLfloat octo_positions[] =
+	{
+		0.5f, 0.0f,  0.5f,   //0	 
+		-0.5f, 0.0f,  0.5f,  //1
+		-0.5f, 0.0f, -0.5f,  //2
+		0.5f, 0.0f, -0.5f,   //3
+		0.0f, 0.75f,  0.0f,  //4 
+		0.0f, -0.75f,  0.0f, //5 
+	};
+
+	// Indices for the triangles
+	static const GLushort octo_indices[] =
+	{
+		0, 3, 4,  // Top
+		0, 1, 4,
+		1, 2, 4, 
+		2, 3, 4,
+		0, 1, 5,  // Bottom
+		0, 3, 5,
+		1, 2, 5, 
+		2, 3, 5
+	};
+
+	// The indices are stored in an element-array buffer (EBO) 
+	glGenBuffers(1, &octo_ebo);  // Reserve a name for the buffer object
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, octo_ebo);  // Bind it to the GL_ELEMENT_ARRAY_BUFFER target
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(octo_indices), octo_indices, GL_STATIC_DRAW);
+	// Allocate space for it (sizeof(positions)) and copy data
+
+	// Set up the vertex-array object (VAO)
+	glGenVertexArrays(1, &octo_vao);  // Reserve a name for the object
+	glBindVertexArray(octo_vao);  // Make the object current
+
+	// The vertex-related data of a VAO is stored in a vertex-buffer object (VBO)
+	glGenBuffers(1, &octo_vbo);  // Reserve a name for the buffer object
+	glBindBuffer(GL_ARRAY_BUFFER, octo_vbo);  // Bind it to the GL_ARRAY_BUFFER target
+	glBufferData(GL_ARRAY_BUFFER, sizeof(octo_positions), octo_positions, GL_STATIC_DRAW);
+	// Allocate space for it (sizeof(positions)) and copy data
+
+	// Connect data to vertex shader, the entrance to OpenGL pipeline
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(0);
 }
 
 //*******************************************************************
@@ -307,7 +360,14 @@ drawCube(void)
 void
 drawOctahedron(void)
 {
-	/* ... To do ... */
+	// Indexed drawing
+
+	// Set up for a glDrawElements call
+	glBindVertexArray(octo_vao);  // Make the object current
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, octo_ebo);
+
+	// DrawElements
+	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_SHORT, NULL);  // count = 36 indices 
 }
 
 
@@ -321,16 +381,22 @@ drawModel(void)
   /* Which model to draw */
   switch (whichModel) {
     case PYRAMID:
-	  drawPyramid();
-	  break;
+		drawPyramid();
+		break;
     case CUBE:
-	  drawCube();
-	  break;
+		drawCube();
+		break;
 	case OCTAHEDRON:
 		drawOctahedron();
 		break;
 	case TEAPOT:
-	  glutSolidTeapot(1.0);
+		glutSolidTeapot(1.0);
+		break;
+	case ICOSAHEDRON:
+		glutSolidIcosahedron();
+		break;
+	case TORUS:
+		glutSolidTorus(1.0,2.0, 50, 20);
   }
 }
 
@@ -585,16 +651,23 @@ modelSelect(int value)
 {
   switch (value) {
     case 1:
-      whichModel = PYRAMID;
-	  break;
+		whichModel = PYRAMID;
+		break;
     case 2:
-      whichModel = CUBE;
-	  break;
+		whichModel = CUBE;
+		break;
 	case 3:
 		whichModel = OCTAHEDRON;
 		break;
 	case 4:
-      whichModel = TEAPOT;
+		whichModel = TEAPOT;
+		break;
+	case 5:
+		whichModel = ICOSAHEDRON;
+		break;
+	case 6:
+		whichModel = TORUS;
+		break;
   }
   glutPostRedisplay();
 }
@@ -603,7 +676,13 @@ modelSelect(int value)
 void
 drawmodeSelect(int value)
 {
-	/* ... To do ... */
+	if (value == 1)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	if (value == 2)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (value == 3)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glutPostRedisplay();
 }
 
 //*******************************************************************
@@ -611,7 +690,8 @@ drawmodeSelect(int value)
 void 
 pointsizeSelect(int value)
 {
-	/* ... To do ... */
+	glPointSize(value * 2.0f);
+	glutPostRedisplay();
 }
 
 //*******************************************************************
@@ -619,7 +699,8 @@ pointsizeSelect(int value)
 void
 linewidthSelect(int value)
 {
-	/* ... To do ... */
+	glLineWidth(value * 2.0f);
+	glutPostRedisplay();
 }
 
 //*******************************************************************
@@ -739,6 +820,8 @@ main(int argc, char* argv[])
   glutAddMenuEntry("Cube", 2);
   glutAddMenuEntry("Octahedron", 3);
   glutAddMenuEntry("Teapot", 4);
+  glutAddMenuEntry("Icosahedron", 5);
+  glutAddMenuEntry("Torus", 6);
 
   drawmodeMenu = glutCreateMenu(drawmodeSelect);
   glutAddMenuEntry("Points", 1);
