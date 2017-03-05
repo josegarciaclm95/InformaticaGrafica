@@ -72,6 +72,8 @@ GLfloat angle = 0.0;  // Angulo de rotacion de cada objeto
 
 GLfloat angle_Earth, angle_Moon = 0.0;
 GLfloat degree = PI / 180.0f;
+GLfloat pyramids_factor = 2.0f;
+GLfloat planets_factor = 2.0f;
 
 /* Array of characters */
 char buffer[256];
@@ -112,7 +114,8 @@ void speedSelect(int value);
 void windowSelect(int value);
 void trimonSelect(int value);
 void popupmenu(int value);
-
+void changeAnimation(int value);
+void changeSpeedAnimation(int value);
 
 //*******************************************************************
 
@@ -300,7 +303,7 @@ drawPlanets(void)
 	//Rotate_R - Movement of rotation
 	glm::mat4 earthMat, scale0_5, translate_E, rotate_T, rotate_R;
 	scale0_5 = Matrices::scale(0.5f, 0.5f, 0.5f);
-	translate_E = Matrices::translate(3.4f, 0.0f, 0.0f);
+	translate_E = Matrices::translate(4.0f, 0.0f, 0.0f);
 	rotate_T = Matrices::rotateY(angle_Earth);
 	rotate_R = Matrices::rotateY(angle_Earth);
 	earthMat *= rotate_T * translate_E * rotate_R * scale0_5;
@@ -313,7 +316,7 @@ drawPlanets(void)
 
 	glm::mat4 moonMat, scale0_25, translate_M, rotate_TE, rotate_MR;
 	scale0_25 = Matrices::scale(0.5f, 0.5f, 0.5f);
-	translate_M = Matrices::translate(2.0f, 0.0f, 0.0f);
+	translate_M = Matrices::translate(2.2f, 0.0f, 0.0f);
 	rotate_TE = Matrices::rotateY(angle_Moon);
 	rotate_MR = Matrices::rotateY(angle_Moon);
 	moonMat *= rotate_TE * translate_M * rotate_MR * scale0_25;
@@ -583,13 +586,13 @@ void
 idle(void)
 {	
 	if (whichModel == PYRAMIDS) {
-		angle += degree / 2.0f;
+		angle += degree / pyramids_factor;
 		drawPyramids();
 	}
 	else {
-		angle += degree / 2.0f;
-		angle_Earth += degree / 4.0f;
-		angle_Moon += degree / 6.0f;
+		angle += degree / planets_factor;
+		angle_Earth += degree / (planets_factor * 2.0f);
+		angle_Moon += degree / (planets_factor * 3.0f);
 		if (angle_Moon > 2 * PI) angle_Moon = 0.0f;
 		if (angle_Earth > 2 * PI) angle_Earth = 0.0f;
 		drawPlanets();
@@ -750,15 +753,36 @@ popupmenu(int value)
   if (value == 666)
     exit(0);
 }
+//*******************************************************************
 
+void
+changeAnimation(int value)
+{
+	if (value == 1) glutIdleFunc(NULL);
+	if (value == 2) glutIdleFunc(idle);
+	glutPostRedisplay();
+}
+//*******************************************************************
+
+void
+changeSpeedAnimation(int value)
+{
+	if (whichModel == PYRAMIDS) {
+		pyramids_factor = (float)value;
+	}
+	else {
+		planets_factor = (float)value;
+	}
+	glutPostRedisplay();
+}
 //*******************************************************************
 
 void
 main(int argc, char* argv[])
 {
   /* Ids for the submenus of the pop-up menu */
-  int viewMenu, modelMenu, drawmodeMenu, pointsizeMenu, linewidthMenu,
-	navmodeMenu, speedMenu, windowMenu, trimonMenu;
+	int viewMenu, modelMenu, drawmodeMenu, pointsizeMenu, linewidthMenu,
+		navmodeMenu, speedMenu, windowMenu, trimonMenu, animation, animation_speed;
 
   /* Process the command line and negotiates the start
 	 of an OpenGL session with the window system */
@@ -787,6 +811,15 @@ main(int argc, char* argv[])
   viewMenu = glutCreateMenu(viewSelect);
   glutAddMenuEntry("Axes", 1);
   glutAddMenuEntry("Info", 2);
+
+  animation = glutCreateMenu(changeAnimation);
+  glutAddMenuEntry("Stop", 1);
+  glutAddMenuEntry("Resume", 2);
+
+  animation_speed = glutCreateMenu(changeSpeedAnimation);
+  glutAddMenuEntry("Slow", 3);
+  glutAddMenuEntry("Normal", 2);
+  glutAddMenuEntry("Fast", 1);
 
   modelMenu = glutCreateMenu(modelSelect);
   glutAddMenuEntry("Pyramids", 1);
@@ -830,6 +863,8 @@ main(int argc, char* argv[])
   glutAddSubMenu("Model", modelMenu);
   glutAddSubMenu("Navigation", navmodeMenu);
   glutAddSubMenu("Speed", speedMenu);
+  glutAddSubMenu("Animation speed", animation_speed);
+  glutAddSubMenu("Animation", animation);
   glutAddSubMenu("Window", windowMenu);
   glutAddSubMenu("Trimon", trimonMenu);
   glutAddMenuEntry("Exit", 666);
