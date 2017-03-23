@@ -9,10 +9,10 @@
 * Jose Pascual Molina Masso.
 * Escuela Superior de Ingenieria Informatica de Albacete.
 */
-
+#include<iostream>
 #include "matrices.h"
-
-
+#include "glm/ext.hpp"
+using namespace std;
 // Note: when you construct a matrix using mat4(), it will be COLUMN-MAJOR
 
 //*******************************************************************
@@ -184,17 +184,50 @@ glm::mat4 Matrices::rotateZ(const float degrees)
 	return ret;
 }
 
+//Function normalize = devuelve vector de misma direccion pero de longitud 1
+//Function cross = cross product
+
 //*******************************************************************
 
 glm::mat4 Matrices::lookAt(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &up)
 {
 	glm::mat4 ret;
-	//Function normalize = devuelve vector de misma direccion pero de longitud 1
-	//Function cross = cross product
-	/* ... to do ... */
-	glm::mat4 trans = translate(eye.x, eye.y, eye.z);
+	std::cout << glm::to_string(eye) << std::endl;
 
+	glm::vec3 nVector = (eye - center) / glm::length(eye - center);
+	std::cout << glm::to_string(nVector) << std::endl;
+	glm::vec3 normUp = glm::normalize(up);
+	glm::vec3 uVector = glm::cross(normUp, nVector) / glm::length(glm::cross(normUp, nVector));
+	glm::vec3 vVector = glm::cross(nVector, uVector);
+	
+	//Rotation matrix
+	glm::mat4 rot;
+	// first column
+	rot[0][0] = uVector.x;
+	rot[0][1] = vVector.x;
+	rot[0][2] = nVector.x;
+	rot[0][3] = 0.0;
+	// second column
+	rot[1][0] = uVector.y;
+	rot[1][1] = vVector.y;
+	rot[1][2] = nVector.y;
+	rot[1][3] = 0.0;
+	// third column
+	rot[2][0] = uVector.z;
+	rot[2][1] = vVector.z;
+	rot[2][2] = nVector.z;
+	rot[2][3] = 0.0;
+	// fourth column
+	rot[3][0] = 0.0;
+	rot[3][1] = 0.0;
+	rot[3][2] = 0.0;
+	rot[3][3] = 1.0;
+	
+	//Translation matrix
+	glm::mat4 trans = translate(-eye.x, -eye.y, -eye.z);
 
+	//Transformation matrix
+	ret = rot * trans;
 	return ret;
 }
 
