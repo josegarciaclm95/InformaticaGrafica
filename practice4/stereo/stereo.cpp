@@ -468,7 +468,7 @@ reshape(int w, int h)
 	/* Set perspective projection parameters. Use the
 	  perspective function from the GLM library */
 
-	/* ... to do ... */
+	projectionMat = glm::perspective(glm::radians(40.0f), (float)w / h, 0.1f, 10000.0f);
 
 	glLoadMatrixf(&projectionMat[0][0]);
 

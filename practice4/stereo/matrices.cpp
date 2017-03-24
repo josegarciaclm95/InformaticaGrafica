@@ -190,7 +190,39 @@ glm::mat4 Matrices::lookAt(const glm::vec3 &eye, const glm::vec3 &center, const 
 {
 	glm::mat4 ret;
 
-	/* ... to do ... */
+	glm::vec3 nVector = (eye - center) / glm::length(eye - center);
+	glm::vec3 normUp = glm::normalize(up);
+	glm::vec3 uVector = glm::cross(normUp, nVector) / glm::length(glm::cross(normUp, nVector));
+	glm::vec3 vVector = glm::cross(nVector, uVector);
+
+	//Rotation matrix
+	glm::mat4 rot;
+	// first column
+	rot[0][0] = uVector.x;
+	rot[0][1] = vVector.x;
+	rot[0][2] = nVector.x;
+	rot[0][3] = 0.0;
+	// second column
+	rot[1][0] = uVector.y;
+	rot[1][1] = vVector.y;
+	rot[1][2] = nVector.y;
+	rot[1][3] = 0.0;
+	// third column
+	rot[2][0] = uVector.z;
+	rot[2][1] = vVector.z;
+	rot[2][2] = nVector.z;
+	rot[2][3] = 0.0;
+	// fourth column
+	rot[3][0] = 0.0;
+	rot[3][1] = 0.0;
+	rot[3][2] = 0.0;
+	rot[3][3] = 1.0;
+
+	//Translation matrix
+	glm::mat4 trans = translate(-eye.x, -eye.y, -eye.z);
+
+	//Transformation matrix
+	ret = rot * trans;
 
 	return ret;
 }
