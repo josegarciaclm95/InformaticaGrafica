@@ -331,13 +331,15 @@ stereoPreLeftImg(void)
 {
   switch (stereoMode) {
 	case ANAGLYPH:
-      /* ... to do ... */
-      break;
+		//glClear(GL_COLOR_BUFFER_BIT);
+		glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_FALSE);
+		break;
 	case INTERLACED1:
       glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
       break;
 	case INTERLACED2:
 	  /* ... to do ... */
+		break;
   }
 }
 //*******************************************************************
@@ -356,13 +358,15 @@ stereoPreRightImg(void)
 {
   switch (stereoMode) {
 	case ANAGLYPH:
-	  /* ... to do ... */
-      break;
+		//glClear(GL_COLOR_BUFFER_BIT);
+		glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
+		break;
 	case INTERLACED1:
       glStencilFunc(GL_EQUAL, 0x1, 0x1);
       break;
 	case INTERLACED2:
 	  /* ... to do ... */
+		break;
   }
 }
 
@@ -373,11 +377,11 @@ stereoPostImg(void)
 {
   switch (stereoMode) {
 	case ANAGLYPH:
-	  /* ... to do ... */
-      break;
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+		break;
 	case INTERLACED1:
 	case INTERLACED2:
-      glStencilFunc (GL_ALWAYS, 0x1, 0x1);
+		glStencilFunc (GL_ALWAYS, 0x1, 0x1);
   }
 }
 
@@ -398,9 +402,8 @@ stereoRedraw(void)
 	stereoPreLeftImg();
 
 	/* Set left eye viewpoint, store the matrix in lookatMat */
-
 	/* ... to do ... */
-
+	lookatMat = Matrices::lookAt(glm::vec3(-eyesep/2, 0.0f, dist), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	/* Navigation transformations */
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitX), glm::vec3(1.0, 0.0, 0.0));
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitY), glm::vec3(0.0, 1.0, 0.0));
@@ -425,11 +428,11 @@ stereoRedraw(void)
 	/* Set right eye viewpoint, store the matrix in lookatMat */
 
 	/* ... to do ... */
-
+	lookatMat = Matrices::lookAt(glm::vec3(eyesep / 2, 0.0f, dist), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	/* Navigation transformations (same as the left eye) */
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitX), glm::vec3(1.0, 0.0, 0.0));
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitY), glm::vec3(0.0, 1.0, 0.0));
-	//orbitMat = Matrices::rotateX(-orbitX) * Matrices::rotateY(-orbitY);
+	orbitMat = Matrices::rotateX(-orbitX) * Matrices::rotateY(-orbitY);
 
 	viewMat = lookatMat * orbitMat;
 	glLoadMatrixf(&viewMat[0][0]);

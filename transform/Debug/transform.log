@@ -1,3 +1,7 @@
-﻿  transform.cpp
-  transform.vcxproj -> C:\Users\garci\Git\ig_practices\transform\Debug\transform.exe
-  transform.vcxproj -> C:\Users\garci\Git\ig_practices\transform\Debug\transform.pdb (Full PDB)
+﻿  trimon.cpp
+  transform.cpp
+  matrices.cpp
+  Generando código...
+  LINK : no se encontró C:\Users\usuario\Desktop\InformaticaGrafica\transform\Debug\transform.exe o no lo generó el último vínculo incremental; ejecutando vínculo completo
+  transform.vcxproj -> C:\Users\usuario\Desktop\InformaticaGrafica\transform\Debug\transform.exe
+  transform.vcxproj -> C:\Users\usuario\Desktop\InformaticaGrafica\transform\Debug\transform.pdb (Full PDB)
