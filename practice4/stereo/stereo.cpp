@@ -335,10 +335,10 @@ stereoPreLeftImg(void)
 		glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_FALSE);
 		break;
 	case INTERLACED1:
-      glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
-      break;
+		glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
+		break;
 	case INTERLACED2:
-	  /* ... to do ... */
+		glStencilFunc(GL_EQUAL, 0x1, 0x1);
 		break;
   }
 }
@@ -362,10 +362,10 @@ stereoPreRightImg(void)
 		glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
 		break;
 	case INTERLACED1:
-      glStencilFunc(GL_EQUAL, 0x1, 0x1);
-      break;
+		glStencilFunc(GL_EQUAL, 0x1, 0x1);
+		break;
 	case INTERLACED2:
-	  /* ... to do ... */
+		glStencilFunc(GL_NOTEQUAL, 0x1, 0x1);
 		break;
   }
 }
@@ -402,7 +402,6 @@ stereoRedraw(void)
 	stereoPreLeftImg();
 
 	/* Set left eye viewpoint, store the matrix in lookatMat */
-	/* ... to do ... */
 	lookatMat = Matrices::lookAt(glm::vec3(-eyesep/2, 0.0f, dist), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	/* Navigation transformations */
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitX), glm::vec3(1.0, 0.0, 0.0));
@@ -426,8 +425,6 @@ stereoRedraw(void)
 	stereoPreRightImg();
 
 	/* Set right eye viewpoint, store the matrix in lookatMat */
-
-	/* ... to do ... */
 	lookatMat = Matrices::lookAt(glm::vec3(eyesep / 2, 0.0f, dist), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	/* Navigation transformations (same as the left eye) */
 	//orbitMat = glm::rotate(orbitMat, glm::radians(-orbitX), glm::vec3(1.0, 0.0, 0.0));
