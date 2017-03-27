@@ -143,7 +143,12 @@ initAxes(void)
 	// Three reference axes
 	static const GLfloat axes_positions[] =
 	{
-		/* ... to do ... */
+		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f
 	};
 
 	// Color for each vertex
@@ -470,14 +475,24 @@ void
 zbufferSelect(int value)
 {
   if (value == 1) {
-    /* ... to do ... */
-	depthtest = true;
-	std::cout << "Z-buffer method enabled\n";
+	if (!depthtest) {
+		depthtest = true;
+		glEnable(GL_DEPTH_TEST);
+		std::cout << "Z-buffer method enabled\n";
+	}
+	else {
+		std::cout << "Z-buffer method already enabled\n";
+	}
   }
   if (value == 2) { 
-	/* ... to do ... */
-	depthtest = false;
-	std::cout << "Z-buffer method disabled\n";
+	if (depthtest) {
+		depthtest = false;
+		glDisable(GL_DEPTH_TEST);
+		std::cout << "Z-buffer method disabled\n";
+	}
+	else {
+		std::cout << "Z-buffer method already disabled\n";
+	}
   }
   glutPostRedisplay();
 }
@@ -487,17 +502,27 @@ zbufferSelect(int value)
 void
 backfaceSelect(int value)
 {
-  if (value == 1) {
-	/* ... to do ... */
-	cullface = true;
-	std::cout << "Back-face culling enabled\n";
-  }
-  if (value == 2) { 
-	/* ... to do ... */
-	cullface = false;
-	std::cout << "Back-face culling disabled\n";
-  }
-  glutPostRedisplay();
+	if (value == 1) {
+		if (!cullface) {
+			cullface = true;
+			glEnable(GL_CULL_FACE);
+			std::cout << "Back-face culling enabled\n";
+		}
+		else {
+			std::cout << "Back-face culling already enabled\n";
+		}
+	}
+	if (value == 2) {
+		if (cullface) {
+			cullface = false;
+			glDisable(GL_CULL_FACE);
+			std::cout << "Back-face culling disabled\n";
+		}
+		else {
+			std::cout << "Back-face culling already disabled\n";
+		}
+	}
+	glutPostRedisplay();
 }
 
 //*******************************************************************
@@ -505,16 +530,26 @@ backfaceSelect(int value)
 void
 frontfaceSelect(int value)
 {
-  if (value == 1) {
-	/* ... to do ... */
-	ccw = true;
-	std::cout << "Vertices defined in counterclockwise direction, viewed from front face\n";
-  }
-  if (value == 2) { 
-	/* ... to do ... */
-	ccw = false;
-	std::cout << "Vertices defined in clockwise direction, viewed from front face\n";
-  }
+	if (value == 1) {
+		if (!ccw) {
+			ccw = true;
+			glFrontFace(GL_CCW);
+			std::cout << "Vertices defined in counterclockwise direction, viewed from front face\n";
+		}
+		else {
+			std::cout << "Vertices already defined in counterclockwise direction, viewed from front face\n";
+		}
+	}
+	if (value == 2) {
+		if (ccw) {
+			ccw = false;
+			glFrontFace(GL_CW);
+			std::cout << "Vertices defined in clockwise direction, viewed from front face\n";
+		}
+		else {
+			std::cout << "Vertices already defined in clockwise direction, viewed from front face\n";
+		}
+	}
   glutPostRedisplay();
 }
 
