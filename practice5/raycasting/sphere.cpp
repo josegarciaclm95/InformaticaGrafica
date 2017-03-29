@@ -1,4 +1,4 @@
-/* sphere.cpp
+	/* sphere.cpp
  *
  * Informatica Grafica / Computer Graphics.
  * Spring 2017.
@@ -34,12 +34,31 @@ Sphere::Sphere(const glm::vec3& Center, float Radius, const glm::vec3& Color) {
    is positive, otherwise returns 0. */
 float Sphere::NearestInt(const glm::vec3& pos, const glm::vec3& dir)
 {
-	/* ... to do ... */
+	float a = glm::pow(dir.x,2) + glm::pow(dir.y, 2) + glm::pow(dir.z, 2);
+	float b = 2 * dir.x * (pos.x - center.x) + 2 * dir.y * (pos.y - center.y) + 2 * dir.z * (pos.z - center.z);
+	float c = glm::pow(pos.x - center.x,2) + glm::pow(pos.y - center.y, 2) + glm::pow(pos.z - center.z, 2) - glm::pow(radius, 2);
+	float sqrt_formula = glm::pow(b, 2) - 4 * a * c;
+	if ((sqrt_formula < 0) || ((sqrt_formula == 0) && ((-b / (2 * a)) <= 0))) {
+		return 0;
+	}
+	else {
+		float plus_t = (-b + glm::sqrt(sqrt_formula)) / (2 * a);
+		float minus_t = (-b - glm::sqrt(sqrt_formula)) / (2 * a);
+
+		if (plus_t > 0) {
+			return plus_t;
+		}
+		else if (minus_t > 0) {
+			return minus_t;
+		}
+		else {
+			return 0;
+		}
+	}
 }
 
 /* Returns the color of the sphere at the intersection point with the ray */
 glm::vec3 Sphere::ComputeColor(const glm::vec3& pos, const glm::vec3& dir, float t) {
-
 	return color;
 }
 

@@ -239,6 +239,11 @@ RayCasting(void)
 
 		/* Compute ray-object intersection (t),
 		   save the nearest one so far (tnear, nearObj) */
+		  t = optr->NearestInt(eye, dir);
+		  if (t > tnear) {
+			  tnear = t;
+			  nearObj = optr;
+		  }
 
 		/* ... to do ... */
 
@@ -247,7 +252,13 @@ RayCasting(void)
 
 	  /* Paint the pixel (SetPixel) with the color of the nearest
 	     object (ComputeColor) or with the background if the ray misses */
-
+	  if (nearObj == nullptr) {
+		  frame.SetPixel(x, y, bgcolor);
+	  }
+	  else {
+		  frame.SetPixel(x, y, nearObj->ComputeColor(eye, dir, tnear));
+	  }
+	  
       /* ... to do ... */
 	}
 
