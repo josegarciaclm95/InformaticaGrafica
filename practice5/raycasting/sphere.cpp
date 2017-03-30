@@ -44,11 +44,10 @@ float Sphere::NearestInt(const glm::vec3& pos, const glm::vec3& dir)
 	else {
 		float plus_t = (-b + glm::sqrt(sqrt_formula)) / (2 * a);
 		float minus_t = (-b - glm::sqrt(sqrt_formula)) / (2 * a);
-
-		if (plus_t > 0) {
+		if (plus_t < minus_t && plus_t > 0) {
 			return plus_t;
 		}
-		else if (minus_t > 0) {
+		else if (minus_t < plus_t && minus_t > 0) {
 			return minus_t;
 		}
 		else {
