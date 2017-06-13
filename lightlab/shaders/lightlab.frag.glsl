@@ -46,7 +46,7 @@ void main (void)
 			if (lightenabled[i]) {
 
 				// Ambient term
-				//finalcolor +=  /* ... to do ... */
+				finalcolor += ambient * lightambient[i];
 
 				vec3 ldirn;
 				if (lightposn[i].w == 0) {
@@ -64,10 +64,10 @@ void main (void)
 				if (lDotN > 0) {
 				
 					// Diffuse (lambert) reflection
-					//vec4 lambert =  /* ... to do ... */  
+					vec4 lambert =  diffuse * lightdiffuse[i] * max (lDotN, 0.0) ;  
 
 					// Specular (mirror) reflection
-					vec3 rdirn = (2 * lDotN * normal) - ldirn;  // R = 2(L·N)N-L
+					vec3 rdirn = (2 * lDotN * normal) - ldirn;  // R = 2(Lï¿½N)N-L
 					float rDotV = dot(rdirn, vdirn);
 					vec4 mirror = specular * lightspecular[i] * pow (max(rDotV, 0.0), shininess) ;
 						

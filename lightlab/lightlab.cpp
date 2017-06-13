@@ -39,6 +39,7 @@
 
 /* Zalman Trimon 3D display */
 #include "trimon.h"
+#define PI 3.14159265358979323846264338327950288   /* pi */
 
 
 /*******************/
@@ -68,7 +69,7 @@ bool isLeftButtonPressed = false;
 
 /* Rotation angle (for animation) */
 GLfloat angle = 0.0;  
-
+GLfloat degree = PI / 180.0f;
 /* Shader variables */
 GLuint render_prog;
 
@@ -216,39 +217,36 @@ drawModel(void)
 	// Lights: positions
 	static const GLfloat lightposn[] = {
 		0.0f, 0.0f, 10.0f, 1.0f,  // Light 1, point
-
-		/* ... to do ... */
-
+		-10.0f, 0.0f, 10.0f, 1.0f,
+		10.0f, 0.0f, 0.0f, 1.0f
 	};
 	// Lights: ambient
 	static const GLfloat lightambient[] = {
 		0.1f, 0.1f, 0.1f, 1.0f,  // Light 1, white
-
-		/* ... to do ... */
-
+		0.1f, 0.0f, 0.0f, 1.0f,  // Light 2, red
+		0.0f, 0.1f, 0.0f, 1.0f,  // Light 3, green
 	};
 	// Lights: diffuse
 	static const GLfloat lightdiffuse[] = {
 		1.0f, 1.0f, 1.0f, 1.0f,  // Light 1, white
-
-		/* ... to do ... */
-
+		1.0f, 0.0f, 0.0f, 1.0f,  // Light 2, red
+		0.0f, 1.0f, 0.0f, 1.0f,  // Light 3, green
 	};
 	// Light: specular
 	static const GLfloat lightspecular[] = {
 		1.0f, 1.0f, 1.0f, 1.0f,  // Light 1, white
-
-		/* ... to do ... */
-
+		1.0f, 0.0f, 0.0f, 1.0f,  // Light 2, red
+		0.0f, 1.0f, 0.0f, 1.0f,  // Light 3, green
 	};
 	// Lights: enabled
 	GLint lightenabled[] = {
 		enablewhitelight,
+		enableredlight,
 		enablegreenlight,
-		enableredlight
+		
 	};
 	// Lights: how many are used
-	int numused = 1;	
+	int numused = 3;	
 
 	// Lights are transformed by current modelview matrix. 
 	// The shader can't do this globally, so we need to do so manually.
@@ -292,21 +290,58 @@ drawModel(void)
 	glUniform4fv(emission_loc, 1, redplasticEmission);
 	glUniform1fv(shininess_loc, 1, &redplasticShininess);
 
-	glm::mat4 torusMat;
-
-	/* ... to do ... */
-
-	modelviewMat = viewMat * torusMat;
+	glm::mat4 torusMat, RT_X, RT_Y, RT;
+	RT = Matrices::translate(0.0f, 1.0f, 0.0f);
+	RT_X = Matrices::rotateX(45);
+	RT_Y = Matrices::rotateY(angle);
+	modelviewMat = viewMat * torusMat * RT * RT_Y * RT_X;
 	glLoadMatrixf(&modelviewMat[0][0]);
 	glutSolidTorus(0.5, 1.0, 20, 20);  // innerRadius, outerRadius, nsides, rings
 
-	// Utah teapot, brass material
+	// Utah teapot, Brass material
+	GLfloat brassAmbient[4] = { 0.33, 0.22, 0.03, 1.0 };
+	GLfloat brassDiffuse[4] = { 0.78, 0.57, 0.11, 1.0 };
+	GLfloat brassSpecular[4] = { 0.99, 0.91, 0.81, 1.0 };
+	GLfloat brassEmission[4] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat brassShininess = 32.0;
+	//Link to shader
+	glUniform4fv(ambient_loc, 1, brassAmbient);
+	glUniform4fv(diffuse_loc, 1, brassDiffuse);
+	glUniform4fv(specular_loc, 1, brassSpecular);
+	glUniform4fv(emission_loc, 1, brassEmission);
+	glUniform1fv(shininess_loc, 1, &brassShininess);
 
-	/* ... to do ... */
+	//Utah Teapot transformations
+	glm::mat4 teapotMat, RTP_Y, TTP;
+
+	RTP_Y = Matrices::rotateY(angle);
+	TTP = Matrices::translate(-2.5f, -1.0f, 0.0f);
+	modelviewMat = viewMat * teapotMat * TTP * RTP_Y;
+	glLoadMatrixf(&modelviewMat[0][0]);
+	glFrontFace(GL_CW);
+	glutSolidTeapot(1.0); 
+	glFrontFace(GL_CCW);
 
 	// Icosahedron, emerald material
+	GLfloat emeraldAmbient[4] = { 0.02, 0.17, 0.02, 1.0 };
+	GLfloat emeraldDiffuse[4] = { 0.07, 0.61, 0.07, 1.0 };
+	GLfloat emeraldSpecular[4] = { 0.63, 0.72, 0.63, 1.0 };
+	GLfloat emeraldEmission[4] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat emeraldShininess = 76.8;
+	//Link to shader
+	glUniform4fv(ambient_loc, 1, emeraldAmbient);
+	glUniform4fv(diffuse_loc, 1, emeraldDiffuse);
+	glUniform4fv(specular_loc, 1, emeraldSpecular);
+	glUniform4fv(emission_loc, 1, emeraldEmission);
+	glUniform1fv(shininess_loc, 1, &emeraldShininess);
 
-	/* ... to do ... */
+	glm::mat4 icoMat, RI_Y, TI;
+
+	RI_Y = Matrices::rotateY(angle);
+	TI = Matrices::translate(2.5f, -1.0f, 0.0f);
+	modelviewMat = viewMat * icoMat * TI * RI_Y;
+	glLoadMatrixf(&modelviewMat[0][0]);
+	glutSolidIcosahedron();
 
 	glLoadMatrixf(&viewMat[0][0]);
 }
@@ -519,8 +554,7 @@ motion(int x, int y)
 void
 idle(void)
 {
-	/* ... to do ... */
-
+	angle += degree*20;
 	glutPostRedisplay();
 }
 
@@ -530,16 +564,22 @@ void
 lightingSelect(int value)
 {
 	if (value == 1) {
-
-		/* ... to do ... */
-
-		std::cout << "Lighting enabled\n";
+		if (!enablelighting) {
+			enablelighting = true;
+			std::cout << "Lighting enabled\n";
+		}
+		else {
+			std::cout << "Lighting already enabled\n";
+		}
 	}
 	if (value == 2) {
-
-		/* ... to do ... */
-
-		std::cout << "Lighting disabled\n";
+		if (enablelighting) {
+			enablelighting = false;
+			std::cout << "Lighting disabled\n";
+		}
+		else {
+			std::cout << "Lighting already disabled\n";
+		}
 	}
 	glutPostRedisplay();
 }
@@ -550,16 +590,23 @@ void
 whitelightSelect(int value)
 {
 	if (value == 1) {
-
-		/* ... to do ... */
-
+		if (!enablewhitelight) {
+			enablewhitelight = true;
+			std::cout << "White light enabled\n";
+		}
+		else {
+			std::cout << "White light already enabled\n";
+		}
 		std::cout << "White light enabled\n";
 	}
 	if (value == 2) {
-
-		/* ... to do ... */
-
-		std::cout << "White light disabled\n";
+		if (enablewhitelight) {
+			enablewhitelight = false;
+			std::cout << "White light disabled\n";
+		}
+		else {
+			std::cout << "White light already disabled\n";
+		}
 	}
 	glutPostRedisplay();
 }
@@ -570,16 +617,22 @@ void
 greenlightSelect(int value)
 {
 	if (value == 1) {
-
-		/* ... to do ... */
-
-		std::cout << "Green light enabled\n";
+		if (!enablegreenlight) {
+			enablegreenlight = true;
+			std::cout << "Green light enabled\n";
+		}
+		else {
+			std::cout << "Green light already enabled\n";
+		}
 	}
 	if (value == 2) {
-
-		/* ... to do ... */
-
-		std::cout << "Green light disabled\n";
+		if (enablegreenlight) {
+			enablegreenlight = false;
+			std::cout << "Green light disabled\n";
+		}
+		else {
+			std::cout << "Green light already disabled\n";
+		}
 	}
 	glutPostRedisplay();
 }
@@ -590,16 +643,22 @@ void
 redlightSelect(int value)
 {
 	if (value == 1) {
-
-		/* ... to do ... */
-
-		std::cout << "Red light enabled\n";
+		if (!enableredlight) {
+			enableredlight = true;
+			std::cout << "Red light enabled\n";
+		}
+		else {
+			std::cout << "Red light already enabled\n";
+		}
 	}
 	if (value == 2) {
-
-		/* ... to do ... */
-
-		std::cout << "Red light disabled\n";
+		if (enableredlight) {
+			enableredlight = false;
+			std::cout << "Red light disabled\n";
+		}
+		else {
+			std::cout << "Red light already disabled\n";
+		}
 	}
 	glutPostRedisplay();
 }
